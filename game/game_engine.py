@@ -26,24 +26,28 @@ class GameEngine:
     def evaluate_guess(self, guess):
         """Draws next card and evaluates prediction."""
         self.next_card = self.deck.draw()
-        
-        if guess == "HIGHER":
-            correct = self.next_card.numeric_rank > self.current_card.numeric_rank
+
+        if self.next_card.numeric_rank == self.current_card.numeric_rank:
+            self.status_msg = f"PUSH! {self.next_card.rank_str} vs {self.current_card.rank_str}"
+            self.status_color = (220, 220, 80)
         else:
-            correct = self.next_card.numeric_rank < self.current_card.numeric_rank
-        
-        if correct:
-            self.streak += 1
-            self.multiplier = self.streak
-            self.score += self.multiplier
-            self.status_msg = f"CORRECT! {self.next_card.rank_str} vs {self.current_card.rank_str}"
-            self.status_color = (80, 220, 80)
-        else:
-            self.score = max(0, self.score - 1)
-            self.streak = 0
-            self.multiplier = 1
-            self.status_msg = f"WRONG! {self.next_card.rank_str} vs {self.current_card.rank_str}"
-            self.status_color = (235, 75, 75)
+            if guess == "HIGHER":
+                correct = self.next_card.numeric_rank > self.current_card.numeric_rank
+            else:
+                correct = self.next_card.numeric_rank < self.current_card.numeric_rank
+
+            if correct:
+                self.streak += 1
+                self.multiplier = self.streak
+                self.score += self.multiplier
+                self.status_msg = f"CORRECT! {self.next_card.rank_str} vs {self.current_card.rank_str}"
+                self.status_color = (80, 220, 80)
+            else:
+                self.score = max(0, self.score - 1)
+                self.streak = 0
+                self.multiplier = 1
+                self.status_msg = f"WRONG! {self.next_card.rank_str} vs {self.current_card.rank_str}"
+                self.status_color = (235, 75, 75)
 
         self.current_card = self.next_card
 
@@ -65,7 +69,7 @@ class GameEngine:
 
         score_surf = self.font_medium.render(f"Score: {self.score}", True, (255, 220, 80))
         screen.blit(score_surf, (30, 30))
-        
+
         streak_surf = self.font_small.render(
             f"Streak: {self.streak}  Multiplier: {self.multiplier}x",
             True,
@@ -97,3 +101,4 @@ class GameEngine:
             low_surf,
             (self.btn_lower.centerx - low_surf.get_width() // 2, self.btn_lower.centery - low_surf.get_height() // 2),
         )
+
